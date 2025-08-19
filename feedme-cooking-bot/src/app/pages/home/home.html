@@ -4,6 +4,28 @@
     <button (click)="addVipOrder()">Add VIP Order</button>
 </div>
 
+<div>
+    <button (click)="addNewBot()">Add New Bot</button>
+    &nbsp;
+    <button (click)="removeBot()">Remove Bot</button>
+    &nbsp;
+</div>
+
+<h3>Bot List</h3>
+
+@if(botList.length == 0 ){
+    <p>No bots</p>
+}
+
+@for(bot of botList; track bot; let index = $index) {
+    <p>Bot ID: {{ bot.id }}</p>
+    <p>Bot Status: {{ bot.status }}</p>
+    <p>Bot Current Order ID: {{ bot.currentOrderID }}</p>
+    <p>Bot Create Date: {{ bot.createDate }}</p>
+
+    <hr>
+}
+
 <h3>Current Orders</h3>
 
 @if(currentOrderList.length == 0 ){
