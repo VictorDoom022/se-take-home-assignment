@@ -1,1 +1,20 @@
-<p>home works!</p>
+<div>
+    <button (click)="addNormalOrder()">Add Normal Order</button>
+    &nbsp;
+    <button (click)="addVipOrder()">Add VIP Order</button>
+</div>
+
+<h3>Current Orders</h3>
+
+@if(currentOrderList.length == 0 ){
+    <p>No current orders</p>
+}
+
+@for(order of currentOrderList; track order; let index = $index) {
+    <p>Order ID: {{ order.id }}</p>
+    <p>Order Type: {{ order.type }}</p>
+    <p>Order Status: {{ order.status }}</p>
+    <p>Order Create Date: {{ order.createDate }}</p>
+
+    <hr>
+}
