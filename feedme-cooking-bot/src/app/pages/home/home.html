@@ -1,23 +1,23 @@
 <div>
-    <button (click)="addNormalOrder()">Add Normal Order</button>
+    <button (click)="orderService.addNormalOrder()">Add Normal Order</button>
     &nbsp;
-    <button (click)="addVipOrder()">Add VIP Order</button>
+    <button (click)="orderService.addVipOrder()">Add VIP Order</button>
 </div>
 
 <div>
-    <button (click)="addNewBot()">Add New Bot</button>
+    <button (click)="orderService.addNewBot()">Add New Bot</button>
     &nbsp;
-    <button (click)="removeBot()">Remove Bot</button>
+    <button (click)="orderService.removeBot()">Remove Bot</button>
     &nbsp;
 </div>
 
 <h3>Bot List</h3>
 
-@if(botList.length == 0 ){
+@if(orderService.botList$ | async){
     <p>No bots</p>
 }
 
-@for(bot of botList; track bot; let index = $index) {
+@for(bot of orderService.botList$ | async; track bot; let index = $index) {
     <p>Bot ID: {{ bot.id }}</p>
     <p>Bot Status: {{ bot.status }}</p>
     <p>Bot Current Order ID: {{ bot.currentOrderID }}</p>
@@ -28,11 +28,11 @@
 
 <h3>Current Orders</h3>
 
-@if(currentOrderList.length == 0 ){
+@if((orderService.orderList$ | async)?.length == 0 ){
     <p>No current orders</p>
 }
 
-@for(order of currentOrderList; track order; let index = $index) {
+@for(order of orderService.orderList$ | async ; track order; let index = $index) {
     <p>Order ID: {{ order.id }}</p>
     <p>Order Type: {{ order.type }}</p>
     <p>Order Status: {{ order.status }}</p>
