@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { Order } from '../../models/order';
 import { Bot } from '../../models/bot';
 import { OrderType } from '../../enums/order-type';
@@ -19,7 +19,9 @@ export class Home {
   botList: Bot[] = [];
   botIDCount: number = 0;
 
-  constructor() { }
+  constructor(
+    private zone: NgZone,
+  ) { }
 
   addNormalOrder() {
     this.currentOrderList.push(
@@ -91,17 +93,52 @@ export class Home {
 
     console.log('running');
     
-    inactiveBot.status == BotStatus.ACTIVE;
+    inactiveBot.status = BotStatus.ACTIVE;
     inactiveBot.currentOrderID = latestPendingOrder.id;
 
-    setTimeout(() => {
-      latestPendingOrder.status = OrderStatus.COMPLETE;
-      inactiveBot.status = BotStatus.INACTIVE;
-      inactiveBot.currentOrderID = undefined;
+    let currentBotIndex: number = this.botList.findIndex(
+      (element) => element.id == inactiveBot.id
+    );
 
-      this.assignBotToOrder();
-      console.log('bot order complete');
-      
+    if(currentBotIndex != -1) {
+      let updatedBot: Bot = new Bot({
+        id: inactiveBot.id,
+        status: inactiveBot.status,
+        currentOrderID: inactiveBot.currentOrderID,
+        createDate: inactiveBot.createDate
+      });
+
+      let tempBotList: Bot[] = [...this.botList];
+      tempBotList[currentBotIndex] = updatedBot;
+      this.botList = tempBotList;
+    }
+
+    let currentOrderIndex: number = this.currentOrderList.findIndex(
+      (element) => element.id == latestPendingOrder.id
+    );
+
+    if(currentBotIndex != -1) {
+      let updatedOrder: Order = new Order({
+        id: latestPendingOrder.id,
+        type: latestPendingOrder.type,
+        status: latestPendingOrder.status,
+        createDate: latestPendingOrder.createDate
+      });
+
+      let tempOrderList: Order[] = [...this.currentOrderList];
+      tempOrderList[currentOrderIndex] = updatedOrder;
+      this.currentOrderList = tempOrderList;
+    }
+
+    setTimeout(() => {
+      this.zone.run(() => {
+        latestPendingOrder.status = OrderStatus.COMPLETE;
+        inactiveBot.status = BotStatus.INACTIVE;
+        inactiveBot.currentOrderID = undefined;
+
+        this.assignBotToOrder();
+        console.log('bot order complete');
+      });
     }, 10000);
   }
 
