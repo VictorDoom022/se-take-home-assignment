@@ -103,6 +103,9 @@ export class OrderService {
     inactiveBot.currentOrderID = latestPendingOrder.id;
     this.botListChange.next(allCurrentBot);
 
+    latestPendingOrder.status = OrderStatus.PREPARING;
+    this.orderListChange.next(allCurrentOrder);
+
     setTimeout(() => {
       console.log('cooking...');
       

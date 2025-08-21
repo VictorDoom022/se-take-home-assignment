@@ -66,6 +66,7 @@
                     class="card mb-3 border-2" 
                     [ngClass]="{ 
                         'border-primary': order.status === 'PENDING', 
+                        'border-warning': order.status === 'PREPARING',
                         'border-success opacity-75': order.status === 'COMPLETE' 
                     }"
                 >
@@ -85,6 +86,7 @@
                                 class="badge" 
                                 [ngClass]="{ 
                                     'bg-primary': order.status === 'PENDING', 
+                                    'bg-warning text-dark': order.status === 'PREPARING',
                                     'bg-success': order.status === 'COMPLETE' 
                                 }"
                             >
