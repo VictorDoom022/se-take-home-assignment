@@ -1,42 +1,105 @@
-<div>
-    <button (click)="orderService.addNormalOrder()">Add Normal Order</button>
-    &nbsp;
-    <button (click)="orderService.addVipOrder()">Add VIP Order</button>
+<div class="container my-4">
+
+    <header class="text-center p-3 mb-4 border-bottom">
+        <h1>🤖 FeedMe Kitchen Controller</h1>
+
+        <div class="d-flex justify-content-center flex-wrap gap-2 mt-3">
+            <div class="btn-group" role="group">
+                <button class="btn btn-primary" (click)="orderService.addNormalOrder()">+ New Normal Order</button>
+                <button class="btn btn-warning" (click)="orderService.addVipOrder()">+ New VIP Order ⭐</button>
+            </div>
+            <div class="btn-group" role="group">
+                <button class="btn btn-success" (click)="orderService.addNewBot()">+ Add Bot</button>
+                <button class="btn btn-danger" (click)="orderService.removeBot()">- Remove Bot</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3 class="text-center mb-3">Cooking Bots 🍳</h3>
+            
+            @for(bot of orderService.botList$ | async; track bot.id) {
+                <div 
+                    class="card mb-3 border-2" 
+                    [ngClass]="{ 
+                        'border-success': bot.status === 'ACTIVE', 
+                        'border-secondary': bot.status === 'INACTIVE' 
+                    }
+                ">
+                    <div class="card-body">
+                        <h5 class="card-title d-flex justify-content-between">
+                            <span>Bot #{{ bot.id }}</span>
+                            <span 
+                                class="badge" 
+                                [ngClass]="{ 
+                                    'bg-success': bot.status === 'ACTIVE', 
+                                    'bg-secondary': bot.status === 'INACTIVE' 
+                                }"
+                            >
+                                {{ bot.status }}
+                            </span>
+                        </h5>
+                        <p class="card-text mb-0 text-muted">
+                            @if(bot.status === 'ACTIVE') {
+                                Processing Order #{{ bot.currentOrderID }}
+                            } @else {
+                                Waiting for an order...
+                            }
+                        </p>
+                    </div>
+                </div>
+            }
+
+            @if((orderService.botList$ | async)?.length === 0) {
+                <div class="card text-center bg-light">
+                    <div class="card-body text-muted">No active bots.</div>
+                </div>
+            }
+        </div>
+
+        <div class="col-md-6">
+            <h3 class="text-center mb-3">All Orders 📋</h3>
+
+            @for(order of orderService.orderList$ | async; track order.id) {
+                <div 
+                    class="card mb-3 border-2" 
+                    [ngClass]="{ 
+                        'border-primary': order.status === 'PENDING', 
+                        'border-success opacity-75': order.status === 'COMPLETE' 
+                    }"
+                >
+                    <div class="card-body">
+                        <h5 class="card-title d-flex justify-content-between">
+                            <span>Order #{{ order.id }}</span>
+                            <span 
+                                class="badge" 
+                                [ngClass]="order.type === 'VIP' ? 'bg-warning text-dark' : 'bg-dark'"
+                            >
+                                {{ order.type }}
+                            </span>
+                        </h5>
+                        <p class="card-text mb-0 text-muted">
+                            Status: 
+                            <span 
+                                class="badge" 
+                                [ngClass]="{ 
+                                    'bg-primary': order.status === 'PENDING', 
+                                    'bg-success': order.status === 'COMPLETE' 
+                                }"
+                            >
+                                {{ order.status }}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            }
+
+            @if((orderService.orderList$ | async)?.length === 0) {
+                <div class="card text-center bg-light">
+                    <div class="card-body text-muted">No orders yet.</div>
+                </div>
+            }
+        </div>
+    </div>
 </div>
-
-<div>
-    <button (click)="orderService.addNewBot()">Add New Bot</button>
-    &nbsp;
-    <button (click)="orderService.removeBot()">Remove Bot</button>
-    &nbsp;
-</div>
-
-<h3>Bot List</h3>
-
-@if(orderService.botList$ | async){
-    <p>No bots</p>
-}
-
-@for(bot of orderService.botList$ | async; track bot; let index = $index) {
-    <p>Bot ID: {{ bot.id }}</p>
-    <p>Bot Status: {{ bot.status }}</p>
-    <p>Bot Current Order ID: {{ bot.currentOrderID }}</p>
-    <p>Bot Create Date: {{ bot.createDate }}</p>
-
-    <hr>
-}
-
-<h3>Current Orders</h3>
-
-@if((orderService.orderList$ | async)?.length == 0 ){
-    <p>No current orders</p>
-}
-
-@for(order of orderService.orderList$ | async ; track order; let index = $index) {
-    <p>Order ID: {{ order.id }}</p>
-    <p>Order Type: {{ order.type }}</p>
-    <p>Order Status: {{ order.status }}</p>
-    <p>Order Create Date: {{ order.createDate }}</p>
-
-    <hr>
-}
