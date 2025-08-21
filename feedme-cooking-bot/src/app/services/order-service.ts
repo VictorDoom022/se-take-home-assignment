@@ -81,6 +81,17 @@ export class OrderService {
     let botToRemove: Bot | undefined = currentBotList.pop();
 
     this.botListChange.next(currentBotList);
+
+    if(botToRemove?.status == BotStatus.ACTIVE) {
+      let currentOrder: Order[] = this.orderListChange.getValue();
+      let orderToUpdate: Order | undefined = currentOrder.find(
+        (element) => element.id == botToRemove?.currentOrderID
+      );
+      
+      if(!orderToUpdate) return;
+      orderToUpdate.status = OrderStatus.PENDING;
+      this.orderListChange.next(currentOrder);
+    }
   }
 
   assignBotToOrder() {
