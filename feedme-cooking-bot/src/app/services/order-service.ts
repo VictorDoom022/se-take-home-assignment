@@ -91,6 +91,9 @@ export class OrderService {
       if(!orderToUpdate) return;
       orderToUpdate.status = OrderStatus.PENDING;
       this.orderListChange.next(currentOrder);
+      console.log('bot remove timeout id', botToRemove.timeoutID);
+      
+      clearTimeout(botToRemove.timeoutID);
     }
   }
 
@@ -117,7 +120,7 @@ export class OrderService {
     latestPendingOrder.status = OrderStatus.PREPARING;
     this.orderListChange.next(allCurrentOrder);
 
-    setTimeout(() => {
+    let tempTimeOutID: number = setTimeout(() => {
       console.log('cooking...');
       
       let latestBotList: Bot[] = this.botListChange.getValue();
@@ -133,6 +136,7 @@ export class OrderService {
       if(botToUpdate) {
         botToUpdate.status = BotStatus.INACTIVE;
         botToUpdate.currentOrderID = undefined;
+        // botToUpdate.timeoutID = tempTimeOutID;
         this.botListChange.next(latestBotList);
       }
 
@@ -144,5 +148,8 @@ export class OrderService {
       this.assignBotToOrder();
       console.log('bot order complete');
     }, 10000)
+
+    inactiveBot.timeoutID = tempTimeOutID;
+    this.botListChange.next(allCurrentBot);
   }
 }
